@@ -6,12 +6,15 @@ Based on code by: [Kris Henriksen](https://github.com/krishenriksen/AnberPorts/t
 Modified to use SDL2 by: [Nikolai Wuttke](https://github.com/lethal-guitar) & [Shanti Gilbert](https://github.com/shantigilbert) for https://github.com/EmuELEC/EmuELEC
 Interactive text entry added by [Robin Duxfield](https://github.com/romadu)
 
-List of keycode values start here: https://github.com/romadu/gptokeyb/blob/7e73617324aa0b20c833a7ea417af3d9484d3b52/gptokeyb.cpp#L288
+List of keycode values start here: 
 
 ## Build
-`make all`
 
-`strip gptokeyb`
+    mkdir build
+    cd build
+    cmake ..
+    cmake --build .
+    strip gptokeyb
 
 ## Use
 gptokeyb provides a kill switch for an application and mapping of gamepad buttons to keys and/or mouse. It also provides an xbox360-compatible controller mode.

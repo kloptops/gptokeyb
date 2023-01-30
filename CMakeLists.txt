@@ -12,15 +12,30 @@ list(APPEND CMAKE_PREFIX_PATH
 )
 
 find_package(LIBEVDEV REQUIRED)
-include_directories(${EVDEV_INCLUDE_DIR})
-
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
+
+include_directories(
+  ${LIBEVDEV_INCLUDE_DIRS}
+  ${SDL2_INCLUDE_DIRS}
+  )
+
+
+set(EXTRA_CXXFLAGS )
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+  set(EXTRA_CXXFLAGS "${EXTRA_CXXFLAGS} -Wall")
+endif()
 
 add_executable(gptokeyb
-    src/gptokeyb.cpp)
+    src/analog.cpp
+    src/config.cpp
+    src/input.cpp
+    src/xbox360.cpp
+    src/keyboard.cpp
+    src/util.cpp
+    src/gptokeyb.cpp
+    )
 
 target_link_libraries(gptokeyb
     ${SDL2_LIBRARIES}
-    ${EVDEV_LIBRARY}
+    ${LIBEVDEV_LIBRARIES}
     )

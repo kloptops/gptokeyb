@@ -33,7 +33,6 @@
 *       Keyboard mode: Add a config file option to load mappings from.
 *       add L2/R2 triggers
 * 
-* Spaghetti code incoming, beware :)
 */
 
 #include "gptokeyb.h"

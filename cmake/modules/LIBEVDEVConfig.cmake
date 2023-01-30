@@ -3,7 +3,7 @@
 #
 #  EVDEV_FOUND          - true if libevdev header and library was found
 #  EVDEV_INCLUDE_DIR    - include path for libevdev
-#  EVDEV_LIBRARY        - library path for libevdev
+#  EVDEV_LIBRARY       - library path for libevdev
 #
 
 find_package(PkgConfig)
