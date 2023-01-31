@@ -37,6 +37,49 @@
 
 #include "gptokeyb.h"
 
+void emit(int type, int code, int val)
+{
+  struct input_event ev;
+
+  ev.type = type;
+  ev.code = code;
+  ev.value = val;
+  /* timestamp values below are ignored */
+  ev.time.tv_sec = 0;
+  ev.time.tv_usec = 0;
+
+  write(uinp_fd, &ev, sizeof(ev));
+}
+
+void emitKey(int code, bool is_pressed, int modifier)
+{
+  if (!(modifier == 0) && is_pressed) {
+    emit(EV_KEY, modifier, is_pressed ? 1 : 0);
+    emit(EV_SYN, SYN_REPORT, 0);
+  }
+  emit(EV_KEY, code, is_pressed ? 1 : 0);
+  emit(EV_SYN, SYN_REPORT, 0);
+  if (!(modifier == 0) && !(is_pressed)) {
+    emit(EV_KEY, modifier, is_pressed ? 1 : 0);
+    emit(EV_SYN, SYN_REPORT, 0);
+  }
+}
+
+void emitTextInputKey(int code, bool uppercase)
+{
+  if (uppercase) { //capitalise capital letters by holding shift
+    emitKey(KEY_LEFTSHIFT, true);
+  }
+  emitKey(code, true);
+  SDL_Delay(16);
+  emitKey(code, false);
+  SDL_Delay(16);
+  if (uppercase) { //release shift if held
+    emitKey(KEY_LEFTSHIFT, false);
+  }
+}
+
+
 // convert ASCII chars to key codes
 short char_to_keycode(const char* str)
 {
@@ -269,4 +312,33 @@ short char_to_keycode(const char* str)
 
   // Default
   return KEY_SPACE;
+}
+
+void doKillMode()
+{
+    if (pckill_mode) {
+        emitKey(KEY_F4, true, KEY_LEFTALT);
+        SDL_Delay(15);
+        emitKey(KEY_F4, false, KEY_LEFTALT);
+    }
+    SDL_RemoveTimer( state.key_repeat_timer_id );
+    if (! sudo_kill) {
+        // printf("Killing: %s\n", AppToKill);
+        if (state.start_jsdevice == state.hotkey_jsdevice) {
+                system((" killall  '" + std::string(AppToKill) + "' ").c_str());
+                system("show_splash.sh exit");
+            sleep(3);
+            if (system((" pgrep '" + std::string(AppToKill) + "' ").c_str()) == 0) {
+                printf("Forcefully Killing: %s\n", AppToKill);
+                system((" killall  -9 '" + std::string(AppToKill) + "' ").c_str());
+            }
+            exit(0); 
+        }   
+    } else {
+        if (state.start_jsdevice == state.hotkey_jsdevice) {
+            system((" kill -9 $(pidof '" + std::string(AppToKill) + "') ").c_str());
+            sleep(3);
+            exit(0);
+        }
+    } // sudo kill
 }

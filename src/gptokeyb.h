@@ -83,16 +83,53 @@ struct config_option
   char value[CONFIG_ARG_MAX_BYTES];
 };
 
+// config.cpp
 std::vector<config_option> parseConfigFile(const char* path);
 void readConfigFile(const char* config_file);
 
-void initialiseCharacters();
+// keyboard.cpp
 void initialiseCharacterSet();
+void nextTextInputKey(bool SingleIncrease);
+void prevTextInputKey(bool SingleIncrease);
+
+void handleEventBtnInteractiveKeyboard(const SDL_Event &event, bool is_pressed);
+
+void setupFakeKeyboardMouseDevice(uinput_user_dev& device, int fd);
+void handleEventBtnFakeKeyboardMouseDevice(const SDL_Event &event, bool is_pressed);
+void handleEventAxisFakeKeyboardMouseDevice(const SDL_Event &event);
+
+
+// input.cpp
+bool handleInputEvent(const SDL_Event& event);
+
+// Xbox360.cpp
+void setupFakeXbox360Device(uinput_user_dev& device, int fd);
+void handleEventBtnFakeXbox360Device(const SDL_Event &event, bool is_pressed);
+void handleEventAxisFakeXbox360Device(const SDL_Event &event);
+
+// util.cpp
+void emit(int type, int code, int val);
+void emitMouseMotion(int x, int y);
+void emitAxisMotion(int code, int value);
+void emitTextInputKey(int code, bool uppercase);
+void emitKey(int code, bool is_pressed, int modifier = 0);
 
 short char_to_keycode(const char* str);
 
+void doKillMode();
+
+// gptokeyb.cpp
+int applyDeadzone(int value, int deadzone);
+void setKeyRepeat(int code, bool is_pressed);
+void processKeys();
+void handleAnalogTrigger(bool is_triggered, bool& was_triggered, int key, int modifier = 0);
+
+
 extern GptokeybConfig config;
 extern GptokeybState state;
+
+extern int uinp_fd;
+extern uinput_user_dev uidev;
 
 extern bool kill_mode;
 extern bool sudo_kill;      //allow sudo kill instead of killall for non-emuelec systems

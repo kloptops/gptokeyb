@@ -184,6 +184,7 @@ struct GptokeybConfig
   bool right_analog_right_repeat = false;
   short right_analog_right_modifier = 0;
 
+  int deadzone = 15000;
   int deadzone_y = 15000;
   int deadzone_x = 15000;
   int deadzone_triggers = 3000;

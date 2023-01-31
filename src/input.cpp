@@ -36,3 +36,60 @@
 */
 
 #include "gptokeyb.h"
+
+bool handleInputEvent(const SDL_Event& event)
+{
+    // Main input loop
+    switch (event.type) {
+    case SDL_CONTROLLERBUTTONDOWN:
+    case SDL_CONTROLLERBUTTONUP:
+        {
+            const bool is_pressed = event.type == SDL_CONTROLLERBUTTONDOWN;
+
+            if (state.textinputinteractive_mode_active) {
+                handleEventBtnInteractiveKeyboard(event, is_pressed);
+            } else if (xbox360_mode) {
+                handleEventBtnFakeXbox360Device(event, is_pressed);
+
+            } else {
+                handleEventBtnFakeKeyboardMouseDevice(event, is_pressed);
+            }
+        }
+        break;
+
+    case SDL_CONTROLLERAXISMOTION:
+        if (xbox360_mode) {
+            handleEventAxisFakeXbox360Device(event);
+        } else {
+            handleEventAxisFakeKeyboardMouseDevice(event);
+        }
+        break;
+
+    case SDL_CONTROLLERDEVICEADDED:
+        if (xbox360_mode == true || config_mode == true) {
+            SDL_GameControllerOpen(0);
+
+            // SDL_GameController* controller = SDL_GameControllerOpen(0);
+            // if (controller) {
+            //     const char *name = SDL_GameControllerNameForIndex(0);
+            //     printf("Joystick %i has game controller name '%s'\n", 0, name);
+            // }
+
+        } else {
+            SDL_GameControllerOpen(event.cdevice.which);
+        }
+        break;
+
+    case SDL_CONTROLLERDEVICEREMOVED:
+        if (SDL_GameController* controller = SDL_GameControllerFromInstanceID(event.cdevice.which)) {
+            SDL_GameControllerClose(controller);
+        }
+        break;
+
+    case SDL_QUIT:
+        return false;
+        break;
+    }
+
+    return true;
+}
