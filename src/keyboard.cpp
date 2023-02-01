@@ -738,13 +738,13 @@ void handleEventBtnFakeKeyboardMouseDevice(const SDL_Event& event, bool is_press
     }
 }
 
-// #define _ANALOG_AXIS_POS(ANALOG_VALUE) (ANALOG_VALUE > config.deadzone)
-// #define _ANALOG_AXIS_NEG(ANALOG_VALUE) (ANALOG_VALUE < config.deadzone)
-// #define _ANALOG_AXIS_ZERO(ANALOG_VALUE) (abs(ANALOG_VALUE) < config.deadzone)
+#define _ANALOG_AXIS_POS(ANALOG_VALUE) (ANALOG_VALUE > config.deadzone)
+#define _ANALOG_AXIS_NEG(ANALOG_VALUE) (ANALOG_VALUE < config.deadzone)
+#define _ANALOG_AXIS_ZERO(ANALOG_VALUE) (abs(ANALOG_VALUE) < config.deadzone)
 
-#define _ANALOG_AXIS_POS(ANALOG_VALUE) (ANALOG_VALUE > 0)
-#define _ANALOG_AXIS_NEG(ANALOG_VALUE) (ANALOG_VALUE < 0)
-#define _ANALOG_AXIS_ZERO(ANALOG_VALUE) (ANALOG_VALUE == 0)
+// #define _ANALOG_AXIS_POS(ANALOG_VALUE) (ANALOG_VALUE > 0)
+// #define _ANALOG_AXIS_NEG(ANALOG_VALUE) (ANALOG_VALUE < 0)
+// #define _ANALOG_AXIS_ZERO(ANALOG_VALUE) (ANALOG_VALUE == 0)
 
 #define _ANALOG_AXIS_TRIGGER(STICK, DIRECTION, AXIS, CONDITION_POS, CONDITION_ZERO) \
     handleAnalogTrigger( \
@@ -767,22 +767,22 @@ void handleEventAxisFakeKeyboardMouseDevice(const SDL_Event &event)
 
     switch (event.caxis.axis) {
     case SDL_CONTROLLER_AXIS_LEFTX:
-        state.current_left_analog_x = applyDeadzone(event.caxis.value, config.deadzone_x);
+        state.current_left_analog_x = event.caxis.value;
         left_axis_movement = true;
         break;
 
     case SDL_CONTROLLER_AXIS_LEFTY:
-        state.current_left_analog_y = applyDeadzone(event.caxis.value, config.deadzone_y);
+        state.current_left_analog_y = event.caxis.value;
         left_axis_movement = true;
         break;
 
     case SDL_CONTROLLER_AXIS_RIGHTX:
-        state.current_right_analog_x = applyDeadzone(event.caxis.value, config.deadzone_x);
+        state.current_right_analog_x = event.caxis.value;
         right_axis_movement = true;
         break;
 
     case SDL_CONTROLLER_AXIS_RIGHTY:
-        state.current_right_analog_y = applyDeadzone(event.caxis.value, config.deadzone_y);
+        state.current_right_analog_y = event.caxis.value;
         right_axis_movement = true;
         break;
 
@@ -797,11 +797,13 @@ void handleEventAxisFakeKeyboardMouseDevice(const SDL_Event &event)
 
     // fake mouse
     if (config.left_analog_as_mouse && left_axis_movement) {
-        state.mouseX = state.current_left_analog_x / config.fake_mouse_scale;
-        state.mouseY = state.current_left_analog_y / config.fake_mouse_scale;
+        deadzone_calc(
+            state.mouseX, state.mouseY,
+            state.current_left_analog_x, state.current_left_analog_y);
     } else if (config.right_analog_as_mouse && right_axis_movement) {
-        state.mouseX = state.current_right_analog_x / config.fake_mouse_scale;
-        state.mouseY = state.current_right_analog_y / config.fake_mouse_scale;
+        deadzone_calc(
+            state.mouseX, state.mouseY,
+            state.current_right_analog_x, state.current_right_analog_y);
     } else {
         // Analogs trigger keys
         if (!(state.textinputinteractive_mode_active)) {

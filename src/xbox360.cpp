@@ -39,57 +39,57 @@
 
 
 void UINPUT_SET_ABS_P(
-  uinput_user_dev* dev,
-  int axis,
-  int min,
-  int max,
-  int fuzz,
-  int flat)
+    uinput_user_dev* dev,
+    int axis,
+    int min,
+    int max,
+    int fuzz,
+    int flat)
 {
-  dev->absmax[axis] = max;
-  dev->absmin[axis] = min;
-  dev->absfuzz[axis] = fuzz;
-  dev->absflat[axis] = flat;
+    dev->absmax[axis] = max;
+    dev->absmin[axis] = min;
+    dev->absfuzz[axis] = fuzz;
+    dev->absflat[axis] = flat;
 }
 
 void setupFakeXbox360Device(uinput_user_dev& device, int fd)
 {
-  strncpy(device.name, "Microsoft X-Box 360 pad", UINPUT_MAX_NAME_SIZE);
-  device.id.vendor = 0x045e;  /* sample vendor */
-  device.id.product = 0x028e; /* sample product */
+    strncpy(device.name, "Microsoft X-Box 360 pad", UINPUT_MAX_NAME_SIZE);
+    device.id.vendor = 0x045e;  /* sample vendor */
+    device.id.product = 0x028e; /* sample product */
 
-  if (
-    ioctl(fd, UI_SET_EVBIT, EV_KEY) || ioctl(fd, UI_SET_EVBIT, EV_SYN) ||
-    ioctl(fd, UI_SET_EVBIT, EV_ABS) ||
-    // X-Box 360 pad buttons
-    ioctl(fd, UI_SET_KEYBIT, BTN_A) || ioctl(fd, UI_SET_KEYBIT, BTN_B) ||
-    ioctl(fd, UI_SET_KEYBIT, BTN_X) || ioctl(fd, UI_SET_KEYBIT, BTN_Y) ||
-    ioctl(fd, UI_SET_KEYBIT, BTN_TL) || ioctl(fd, UI_SET_KEYBIT, BTN_TR) ||
-    ioctl(fd, UI_SET_KEYBIT, BTN_THUMBL) ||
-    ioctl(fd, UI_SET_KEYBIT, BTN_THUMBR) ||
-    ioctl(fd, UI_SET_KEYBIT, BTN_SELECT) ||
-    ioctl(fd, UI_SET_KEYBIT, BTN_START) || ioctl(fd, UI_SET_KEYBIT, BTN_MODE) ||
-    // absolute (sticks)
-    ioctl(fd, UI_SET_ABSBIT, ABS_X) ||
-    ioctl(fd, UI_SET_ABSBIT, ABS_Y) ||
-    ioctl(fd, UI_SET_ABSBIT, ABS_RX) ||
-    ioctl(fd, UI_SET_ABSBIT, ABS_RY) ||
-    ioctl(fd, UI_SET_ABSBIT, ABS_Z) ||
-    ioctl(fd, UI_SET_ABSBIT, ABS_RZ) ||
-    ioctl(fd, UI_SET_ABSBIT, ABS_HAT0X) ||
-    ioctl(fd, UI_SET_ABSBIT, ABS_HAT0Y)) {
-    printf("Failed to configure fake Xbox 360 controller\n");
-    exit(-1);
-  }
+    if (
+            ioctl(fd, UI_SET_EVBIT, EV_KEY) || ioctl(fd, UI_SET_EVBIT, EV_SYN) ||
+            ioctl(fd, UI_SET_EVBIT, EV_ABS) ||
+            // X-Box 360 pad buttons
+            ioctl(fd, UI_SET_KEYBIT, BTN_A) || ioctl(fd, UI_SET_KEYBIT, BTN_B) ||
+            ioctl(fd, UI_SET_KEYBIT, BTN_X) || ioctl(fd, UI_SET_KEYBIT, BTN_Y) ||
+            ioctl(fd, UI_SET_KEYBIT, BTN_TL) || ioctl(fd, UI_SET_KEYBIT, BTN_TR) ||
+            ioctl(fd, UI_SET_KEYBIT, BTN_THUMBL) ||
+            ioctl(fd, UI_SET_KEYBIT, BTN_THUMBR) ||
+            ioctl(fd, UI_SET_KEYBIT, BTN_SELECT) ||
+            ioctl(fd, UI_SET_KEYBIT, BTN_START) || ioctl(fd, UI_SET_KEYBIT, BTN_MODE) ||
+            // absolute (sticks)
+            ioctl(fd, UI_SET_ABSBIT, ABS_X) ||
+            ioctl(fd, UI_SET_ABSBIT, ABS_Y) ||
+            ioctl(fd, UI_SET_ABSBIT, ABS_RX) ||
+            ioctl(fd, UI_SET_ABSBIT, ABS_RY) ||
+            ioctl(fd, UI_SET_ABSBIT, ABS_Z) ||
+            ioctl(fd, UI_SET_ABSBIT, ABS_RZ) ||
+            ioctl(fd, UI_SET_ABSBIT, ABS_HAT0X) ||
+            ioctl(fd, UI_SET_ABSBIT, ABS_HAT0Y)) {
+        printf("Failed to configure fake Xbox 360 controller\n");
+        exit(-1);
+    }
 
-  UINPUT_SET_ABS_P(&device, ABS_X, -32768, 32767, 16, 128);
-  UINPUT_SET_ABS_P(&device, ABS_Y, -32768, 32767, 16, 128);
-  UINPUT_SET_ABS_P(&device, ABS_RX, -32768, 32767, 16, 128);
-  UINPUT_SET_ABS_P(&device, ABS_RY, -32768, 32767, 16, 128);
-  UINPUT_SET_ABS_P(&device, ABS_HAT0X, -1, 1, 0, 0);
-  UINPUT_SET_ABS_P(&device, ABS_HAT0Y, -1, 1, 0, 0);
-  UINPUT_SET_ABS_P(&device, ABS_Z, 0, 255, 0, 0);
-  UINPUT_SET_ABS_P(&device, ABS_RZ, 0, 255, 0, 0);
+    UINPUT_SET_ABS_P(&device, ABS_X, -32768, 32767, 16, 128);
+    UINPUT_SET_ABS_P(&device, ABS_Y, -32768, 32767, 16, 128);
+    UINPUT_SET_ABS_P(&device, ABS_RX, -32768, 32767, 16, 128);
+    UINPUT_SET_ABS_P(&device, ABS_RY, -32768, 32767, 16, 128);
+    UINPUT_SET_ABS_P(&device, ABS_HAT0X, -1, 1, 0, 0);
+    UINPUT_SET_ABS_P(&device, ABS_HAT0Y, -1, 1, 0, 0);
+    UINPUT_SET_ABS_P(&device, ABS_Z, 0, 255, 0, 0);
+    UINPUT_SET_ABS_P(&device, ABS_RZ, 0, 255, 0, 0);
 }
 
 

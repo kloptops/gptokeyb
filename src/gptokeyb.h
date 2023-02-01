@@ -59,11 +59,9 @@
 #define SDL_DEFAULT_REPEAT_DELAY 500
 #define SDL_DEFAULT_REPEAT_INTERVAL 30
 
-// OH GOD D:
-#include "spaghetti.h"
-
 
 enum DZ_MODE {
+    DZ_DEFAULT,
     DZ_AXIAL,
     DZ_RADIAL,
     DZ_SCALED_RADIAL,
@@ -72,15 +70,18 @@ enum DZ_MODE {
     DZ_HYBRID,
 };
 
-DZ_MODE deadzone_mode(char *str);
-void deadzone_calc(int &x, int &y, int scale, int deadzone, DZ_MODE mode);
+// OH GOD D:
+#include "spaghetti.h"
+
+DZ_MODE deadzone_get_mode(const char *str);
+void deadzone_calc(int &x, int &y, int in_x, int in_y);
 
 #define CONFIG_ARG_MAX_BYTES 128
 
 struct config_option
 {
-  char key[CONFIG_ARG_MAX_BYTES];
-  char value[CONFIG_ARG_MAX_BYTES];
+    char key[CONFIG_ARG_MAX_BYTES];
+    char value[CONFIG_ARG_MAX_BYTES];
 };
 
 // config.cpp
@@ -113,6 +114,7 @@ void emitMouseMotion(int x, int y);
 void emitAxisMotion(int code, int value);
 void emitTextInputKey(int code, bool uppercase);
 void emitKey(int code, bool is_pressed, int modifier = 0);
+void handleAnalogTrigger(bool is_triggered, bool& was_triggered, int key, int modifier = 0);
 
 short char_to_keycode(const char* str);
 
@@ -122,7 +124,6 @@ void doKillMode();
 int applyDeadzone(int value, int deadzone);
 void setKeyRepeat(int code, bool is_pressed);
 void processKeys();
-void handleAnalogTrigger(bool is_triggered, bool& was_triggered, int key, int modifier = 0);
 
 
 extern GptokeybConfig config;
