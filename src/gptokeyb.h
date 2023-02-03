@@ -56,33 +56,14 @@
 
 #include <SDL.h>
 
+#define CONFIG_ARG_MAX_BYTES 128
 #define SDL_DEFAULT_REPEAT_DELAY 500
 #define SDL_DEFAULT_REPEAT_INTERVAL 30
 
-
-enum DZ_MODE {
-    DZ_DEFAULT,
-    DZ_AXIAL,
-    DZ_RADIAL,
-    DZ_SCALED_RADIAL,
-    DZ_SLOPED_AXIAL,
-    DZ_SLOPED_SCALED_AXIAL,
-    DZ_HYBRID,
-};
-
-// OH GOD D:
-#include "spaghetti.h"
+#include "structs.h"
 
 DZ_MODE deadzone_get_mode(const char *str);
 void deadzone_calc(int &x, int &y, int in_x, int in_y);
-
-#define CONFIG_ARG_MAX_BYTES 128
-
-struct config_option
-{
-    char key[CONFIG_ARG_MAX_BYTES];
-    char value[CONFIG_ARG_MAX_BYTES];
-};
 
 // config.cpp
 std::vector<config_option> parseConfigFile(const char* path);

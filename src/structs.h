@@ -35,9 +35,18 @@
 * 
 */
 
-#ifndef __SPAGHETTI_H__
-#define __SPAGHETTI_H__
+#ifndef __STRUCTS_H__
+#define __STRUCTS_H__
 
+enum DZ_MODE {
+    DZ_DEFAULT,
+    DZ_AXIAL,
+    DZ_RADIAL,
+    DZ_SCALED_RADIAL,
+    DZ_SLOPED_AXIAL,
+    DZ_SLOPED_SCALED_AXIAL,
+    DZ_HYBRID,
+};
 
 struct GptokeybState
 {
@@ -200,4 +209,11 @@ struct GptokeybConfig
     char* text_input_preset;
 };
 
-#endif /* __SPAGHETTI_H__ */
+
+struct config_option
+{
+    char key[CONFIG_ARG_MAX_BYTES];
+    char value[CONFIG_ARG_MAX_BYTES];
+};
+
+#endif /* __STRUCTS_H__ */
