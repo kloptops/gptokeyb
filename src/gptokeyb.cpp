@@ -234,6 +234,12 @@ int main(int argc, char* argv[])
     }
 
 
+    // SDL initialization and main loop
+    if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_TIMER) != 0) {
+        printf("SDL_Init() failed: %s\n", SDL_GetError());
+        return -1;
+    }
+
     // Create fake input device (not needed in kill mode)
     //if (!kill_mode) {  
     if (config_mode || xbox360_mode || textinputinteractive_mode) { // initialise device, even in kill mode, now that kill mode will work with config & xbox modes
@@ -291,12 +297,6 @@ int main(int argc, char* argv[])
 
     if (const char* db_file = SDL_getenv("SDL_GAMECONTROLLERCONFIG_FILE")) {
         SDL_GameControllerAddMappingsFromFile(db_file);
-    }
-
-    // SDL initialization and main loop
-    if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_TIMER) != 0) {
-        printf("SDL_Init() failed: %s\n", SDL_GetError());
-        return -1;
     }
 
     SDL_Event event;
