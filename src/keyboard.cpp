@@ -738,8 +738,8 @@ void handleEventBtnFakeKeyboardMouseDevice(const SDL_Event& event, bool is_press
     }
 }
 
-#define _ANALOG_AXIS_POS(ANALOG_VALUE) (ANALOG_VALUE > config.deadzone)
-#define _ANALOG_AXIS_NEG(ANALOG_VALUE) (ANALOG_VALUE < config.deadzone)
+#define _ANALOG_AXIS_POS(ANALOG_VALUE) !_ANALOG_AXIS_ZERO(ANALOG_VALUE) && ((ANALOG_VALUE) > config.deadzone)
+#define _ANALOG_AXIS_NEG(ANALOG_VALUE) !_ANALOG_AXIS_ZERO(ANALOG_VALUE) && ((ANALOG_VALUE) < config.deadzone)
 #define _ANALOG_AXIS_ZERO(ANALOG_VALUE) (abs(ANALOG_VALUE) < config.deadzone)
 
 // #define _ANALOG_AXIS_POS(ANALOG_VALUE) (ANALOG_VALUE > 0)
