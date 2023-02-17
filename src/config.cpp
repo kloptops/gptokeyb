@@ -76,6 +76,7 @@ std::vector<config_option> parseConfigFile(const char* path)
     return result;
 }
 
+
 // UGLY, but works.
 #define _KEY_CONFIG_EXTRA(KEY) \
     if (strcmp(co.value, "add_alt") == 0) { config.KEY ## _modifier |= KEY_LEFTALT; } \
@@ -86,11 +87,17 @@ std::vector<config_option> parseConfigFile(const char* path)
 #define _KEY_CONFIG_EXTRA_W_REPEAT(KEY) \
     if (strcmp(co.value, "repeat") == 0) { config.KEY ## _repeat = true; } else _KEY_CONFIG_EXTRA(KEY)
 
+#define _KEY_CONFIG_EXTRA_MS_W_REPEAT(KEY) \
+    if (strcmp(co.value, "mouse_slow") == 0) { config.KEY = 0; config.mouse_slow_button = (GBTN_ ## KEY); } else _KEY_CONFIG_EXTRA_W_REPEAT(KEY)
+
 #define _KEY_CONFIG(KEY) \
     (strcmp(co.key, #KEY) == 0) { _KEY_CONFIG_EXTRA(KEY) }
 
 #define _KEY_CONFIG_RPT(KEY) \
     (strcmp(co.key, #KEY) == 0) { _KEY_CONFIG_EXTRA_W_REPEAT(KEY) }
+
+#define _KEY_CONFIG_MS_RPT(KEY) \
+    (strcmp(co.key, #KEY) == 0) { _KEY_CONFIG_EXTRA_MS_W_REPEAT(KEY) }
 
 #define _KEY_CONFIG_MM(KEY, KEY_BASE) \
     (strcmp(co.key, #KEY) == 0) { \
@@ -100,7 +107,7 @@ std::vector<config_option> parseConfigFile(const char* path)
     }
 
 #define _KEY_CONFIG_HK(KEY) \
-    _KEY_CONFIG_RPT(KEY) else if _KEY_CONFIG(KEY ## _hk)
+    _KEY_CONFIG_MS_RPT(KEY) else if _KEY_CONFIG(KEY ## _hk)
 
 #define _KEY_CONFIG_ATOI(KEY) \
     (strcmp(co.key, #KEY) == 0) { config.KEY = atoi(co.value); }
@@ -129,7 +136,7 @@ void readConfigFile(const char* config_file)
         else if _KEY_CONFIG_HK(r1)          // R1 button, Hotkey + R1
         else if _KEY_CONFIG_HK(r2)          // R2 button, Hotkey + R2
         else if _KEY_CONFIG_RPT(r3)         // R3 button
-        else if _KEY_CONFIG_RPT(up)         // Up dpad
+        else if _KEY_CONFIG_MM(up, dpad)    // Up dpad
         else if _KEY_CONFIG_RPT(down)       // Down dpad
         else if _KEY_CONFIG_RPT(left)       // Left dpad
         else if _KEY_CONFIG_RPT(right)      // Right dpad
@@ -151,9 +158,29 @@ void readConfigFile(const char* config_file)
         else if _KEY_CONFIG_ATOI(deadzone_y)
         else if _KEY_CONFIG_ATOI(deadzone_x)
         else if _KEY_CONFIG_ATOI(deadzone_triggers)
+        else if _KEY_CONFIG_ATOI(dpad_mouse_step)
+        else if _KEY_CONFIG_ATOI(mouse_slow_scale)
         else if _KEY2_CONFIG_ATOI(mouse_scale, fake_mouse_scale)
         else if _KEY2_CONFIG_ATOI(mouse_delay, fake_mouse_delay)
         else if _KEY2_CONFIG_ATOI(repeat_delay, key_repeat_delay)
         else if _KEY2_CONFIG_ATOI(repeat_interval, key_repeat_interval)
     }
+
+    // Gotta clear these
+    if (config.dpad_as_mouse) {
+        config.up = 0;
+        config.up_repeat = false;
+        config.down = 0;
+        config.down_repeat = false;
+        config.left = 0;
+        config.left_repeat = false;
+        config.right = 0;
+        config.right_repeat = false;
+    }
+
+    if (config.mouse_slow_scale > 100)
+        config.mouse_slow_scale = 100;
+
+    if (config.mouse_slow_scale <= 0)
+        config.mouse_slow_scale = 1;
 }

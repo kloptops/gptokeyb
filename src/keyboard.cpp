@@ -463,7 +463,15 @@ void handleEventBtnInteractiveKeyboard(const SDL_Event &event, bool is_pressed)
     }   //switch (event.cbutton.button) for textinputinteractive_mode_active     
 }
 
+#define _UPDATE_BUTTON_STATE(BUTTON) \
+    if (is_pressed) { \
+        GBTN_ON(BUTTON); \
+    } else { \
+        GBTN_OFF(BUTTON); \
+    }
+
 #define _DPAD_TRIGGER(DIRECTION) \
+    _UPDATE_BUTTON_STATE(DIRECTION) \
     emitKey(config.DIRECTION, is_pressed, config.left_modifier); \
     if ((config.DIRECTION ## _repeat && is_pressed && (state.key_to_repeat == 0)) || \
             (!(is_pressed) && (state.key_to_repeat == config.DIRECTION))) { \
@@ -471,6 +479,7 @@ void handleEventBtnInteractiveKeyboard(const SDL_Event &event, bool is_pressed)
     }
 
 #define _BUTTON_TRIGGER(BUTTON) \
+    _UPDATE_BUTTON_STATE(BUTTON) \
     if (state.hotkey_pressed) { \
         emitKey(config.BUTTON ## _hk, is_pressed, config.BUTTON ## _hk_modifier); \
         if (is_pressed) { \
@@ -553,6 +562,7 @@ void handleEventBtnFakeKeyboardMouseDevice(const SDL_Event& event, bool is_press
         break;
 
     case SDL_CONTROLLER_BUTTON_LEFTSTICK:
+        _UPDATE_BUTTON_STATE(l3)
         if ((kill_mode && hotkey_override && (strcmp(hotkey_code, "l3") == 0)) || (textinputpreset_mode && hotkey_override && (strcmp(hotkey_code, "l3") == 0)) || (textinputinteractive_mode && hotkey_override && (strcmp(hotkey_code, "l3") == 0))) {
             state.hotkey_jsdevice = event.cdevice.which;
             state.hotkey_pressed = is_pressed;
@@ -585,6 +595,7 @@ void handleEventBtnFakeKeyboardMouseDevice(const SDL_Event& event, bool is_press
         break;
 
     case SDL_CONTROLLER_BUTTON_RIGHTSTICK:
+        _UPDATE_BUTTON_STATE(r3)
         emitKey(config.r3, is_pressed, config.r3_modifier);
         if ((config.r3_repeat && is_pressed && (state.key_to_repeat == 0)) || (!(is_pressed) && (state.key_to_repeat == config.r3))){
             setKeyRepeat(config.r3, is_pressed);
@@ -592,6 +603,7 @@ void handleEventBtnFakeKeyboardMouseDevice(const SDL_Event& event, bool is_press
         break;
 
     case SDL_CONTROLLER_BUTTON_GUIDE:
+        _UPDATE_BUTTON_STATE(guide)
         if ((kill_mode && !(hotkey_override)) || (kill_mode && hotkey_override && (strcmp(hotkey_code, "guide") == 0)) || (textinputpreset_mode && !(hotkey_override)) || (textinputpreset_mode && (strcmp(hotkey_code, "guide") == 0)) || (textinputinteractive_mode && !(hotkey_override)) || (textinputinteractive_mode && (strcmp(hotkey_code, "guide") == 0))) {
             state.hotkey_jsdevice = event.cdevice.which;
             state.hotkey_pressed = is_pressed;
@@ -625,6 +637,7 @@ void handleEventBtnFakeKeyboardMouseDevice(const SDL_Event& event, bool is_press
         break;
 
     case SDL_CONTROLLER_BUTTON_BACK: // aka select
+        _UPDATE_BUTTON_STATE(back)
         if (!emuelec_override) {
             if ((kill_mode && !(hotkey_override)) || (kill_mode && hotkey_override && (strcmp(hotkey_code, "back") == 0))) {
                 state.hotkey_jsdevice = event.cdevice.which;
@@ -661,6 +674,7 @@ void handleEventBtnFakeKeyboardMouseDevice(const SDL_Event& event, bool is_press
         break;
 
     case SDL_CONTROLLER_BUTTON_START:
+        _UPDATE_BUTTON_STATE(start)
         if ((kill_mode) || (textinputpreset_mode) || (textinputinteractive_mode)) {
             state.start_jsdevice = event.cdevice.which;
             state.start_pressed = is_pressed;

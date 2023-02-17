@@ -53,6 +53,9 @@ void emit(int type, int code, int val)
 
 void emitKey(int code, bool is_pressed, int modifier)
 {
+    if (code == 0)
+        return;
+
     if (!(modifier == 0) && is_pressed) {
         emit(EV_KEY, modifier, is_pressed ? 1 : 0);
         emit(EV_SYN, SYN_REPORT, 0);

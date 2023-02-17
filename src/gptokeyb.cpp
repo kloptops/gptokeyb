@@ -301,14 +301,31 @@ int main(int argc, char* argv[])
 
     SDL_Event event;
     bool running = true;
+    int mouse_x = 0;
+    int mouse_y = 0;
+    float slow_scale = (100.0 / (float)(config.mouse_slow_scale));
 
     while (running) {
-        if (state.mouseX != 0 || state.mouseY != 0) {
+        if (state.mouseX != 0 || state.mouseY != 0 || (config.dpad_as_mouse && GBTN_CHECK_BTN(DPAD))) {
             while (running && SDL_PollEvent(&event)) {
                 running = handleInputEvent(event);
             }
 
-            emitMouseMotion(state.mouseX, state.mouseY);
+            mouse_x = state.mouseX;
+            mouse_y = state.mouseY;
+            if (config.dpad_as_mouse) {
+                mouse_x -= (GBTN_CHECK_BTN(LEFT)  ? config.dpad_mouse_step : 0);
+                mouse_x += (GBTN_CHECK_BTN(RIGHT) ? config.dpad_mouse_step : 0);
+                mouse_y -= (GBTN_CHECK_BTN(UP)    ? config.dpad_mouse_step : 0);
+                mouse_y += (GBTN_CHECK_BTN(DOWN)  ? config.dpad_mouse_step : 0);
+            }
+
+            if (config.mouse_slow_button && GBTN_CHECK(config.mouse_slow_button)) {
+                mouse_x = (int)((float)(mouse_x) / slow_scale);
+                mouse_y = (int)((float)(mouse_y) / slow_scale);
+            }
+
+            emitMouseMotion(mouse_x, mouse_y);
             SDL_Delay(config.fake_mouse_delay);
         } else {
             if (!SDL_WaitEvent(&event)) {
