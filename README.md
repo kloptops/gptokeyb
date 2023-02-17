@@ -53,39 +53,100 @@ Default mappings are:
 ```back = esc
 start = enter
 guide = enter
+
 a = x
 b = z
 x = c
 y = a
+
 l1 = rightshift
 l2 = home
 l3 = mouse_right
+
 r1 = leftshift
 r2 = end
 r3 = mouse_left
+
 up = up
 down = down
 left = left
 right = right
 
-left_analog_as_mouse = false
-right_analog_as_mouse = false
 left_analog_up = w
 left_analog_down = s
 left_analog_left = a
 left_analog_right = d
+
 right_analog_up = end
 right_analog_down = home
 right_analog_left = left
 right_analog_right = right
 
-deadzone_y = 15000
-deadzone_x = 15000
-deadzone_triggers = 3000
+# Old deadzone code
+deadzone_y = 2100
+deadzone_x = 1900
+mouse_scale = 512
+mouse_delay = 16
 
-fake_mouse_scale = 512
-fake_mouse_delay = 16
+# New deadzone code, this will overwrite the above deadzone code behaviour
+# Choices of: axial, radial, scaled_radial, sloped_axial, sloped_scaled_axial, hybrid
+deadzone_mode = scaled_radial
+deadzone = 2000
+deadzone_scale = 8
+deadzone_delay = 16 ## An alias for mouse delay
 ```
+
+#### Mouse slow
+
+You can additionally slow the cursors speed temporarily by defining a button as `mouse_slow`. The rate at which is slows is controlled by `mouse_slow_scale`.
+
+```
+l1 = mouse_slow
+
+mouse_slow_scale = 50 # 50%
+```
+
+The scale is proportional, so 75 will run the mouse at 75% of the mouse movement. So for example 7 becomes 5 with `mouse_slow_scale = 75`.
+
+#### Mouse control via Analog stick
+
+The mouse can be controlled via the analog sticks, either the left or the right if the device has one.
+
+```
+left_analog_up = mouse_movement_up
+# the rest of these do nothing:
+left_analog_down = mouse_movement_down
+left_analog_left = mouse_movement_left
+left_analog_right = mouse_movement_right
+
+```
+
+You can only have the left or right analog stick set as mouse movement at one time. If both are set, it will default to the left stick.
+
+You can control the behaviour of the analog stick and the deadzones, we have several different deadzone scaling modes which we used the implementation of from here: https://github.com/Minimuino/thumbstick-deadzones
+
+The variable `deadzone` is the minimum amount the stick needs to move before it registers, `deadzone_scale` is the amount the mouse will move at the sticks maximum. `deadzone_delay` / `mouse_delay` is the delay between moving the mouse measured in milliseconds.
+
+```
+# Choices of: axial, radial, scaled_radial, sloped_axial, sloped_scaled_axial, hybrid
+deadzone_mode = scaled_radial
+deadzone = 2000
+deadzone_scale = 8
+deadzone_delay = 16 ## An alias for mouse delay
+```
+
+#### Dpad as mouse control
+
+You can control the mouse with the dpad, keeping with the normal configuration code, and the mouse movement rate is adjusted by setting `dpad_mouse_step`. The above `mouse_slow` keybinding works in conjunction with the mouse control as dpad, and you can still control the mouse via an analog stick.
+
+```
+up = mouse_movement_up
+
+dpad_mouse_step = 7
+```
+
+**Note:** Enabling mouse control via dpad will disable all keybindings on the dpad.
+
 #### Hotkey + Button for additional Key Assignments
 An additional 8 keys can be assigned through Hotkey combinations for `a`, `b`, `x`, `y`, `l1`, `l2`, `r1`, `r2` buttons. Hotkey+button assignments are specified by adding `_hk` for the appropriate button (see default mappings below). The keys can use the same `Alt`, `Ctrl` or `Shift` modifiers by including a separate line that indicates `add_alt`, `add_ctrl` or `add_shift` respectively. 
 
@@ -106,6 +167,7 @@ l2_hk = home
 r1_hk = enter
 r2_hk = end
 ```
+
 #### Key Modifiers
 Sometimes key presses require a combination of `Alt`, `Ctrl` or `Shift` plus the key. These combinations can be specified by adding a separate line that indicates `add_alt`, `add_ctrl` or `add_shift` respectively. Modified keys can '''not''' be repeated at present. 
 
@@ -114,6 +176,7 @@ The following example assigns `CTRL+X` to the `A` button.
 a = x
 a = add_ctrl
 ```
+
 #### Key Repeat
 A simple keyboard key repeat function has been added that emulates automatic repeat of a keyboard key, once it has been held for at least an initial `delay`, at a regular `interval`. Key repeat works for one key at a time only (the first key that is pressed and held is repeated, and holding another key will not cause that to repeat, unless the first key is released). Key repeat has not been set up to work for analog triggers (L2/R2) at the moment.
 
@@ -124,6 +187,7 @@ SDL_DEFAULT_REPEAT_INTERVAL 30
 
 Key repeat is configured by adding `gamepad_button = repeat` as a separate line, in addition to the line `gamepad_button = keyboard key`. The following assigns arrow keys with key repeat to the gamepad d-pad and left analog stick.
 ```
+
 up = up
 up = repeat
 down = down
@@ -141,6 +205,7 @@ left_analog_left = repeat
 left_analog_right = right
 left_analog_right = repeat
 ```
+
 ### Text Entry Options
 Text entry is possible, either by sending a preset (e.g. to enter your name to begin a game) or via an interactive input mode that's similar to entry of initials for a high score table 
 
