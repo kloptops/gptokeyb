@@ -355,24 +355,32 @@ void doKillMode()
         SDL_Delay(15);
         emitKey(KEY_F4, false, KEY_LEFTALT);
     }
+
     SDL_RemoveTimer( state.key_repeat_timer_id );
-    if (! sudo_kill) {
-        // printf("Killing: %s\n", AppToKill);
-        if (state.start_jsdevice == state.hotkey_jsdevice) {
-                system((" killall  '" + std::string(AppToKill) + "' ").c_str());
-                system("show_splash.sh exit");
+    if (state.start_jsdevice == state.hotkey_jsdevice) {
+        if (! sudo_kill) {
+            // printf("Killing: %s\n", AppToKill);
+            system((" killall  '" + std::string(AppToKill) + "' ").c_str());
+            system("show_splash.sh exit");
+
             sleep(3);
             if (system((" pgrep '" + std::string(AppToKill) + "' ").c_str()) == 0) {
                 printf("Forcefully Killing: %s\n", AppToKill);
                 system((" killall  -9 '" + std::string(AppToKill) + "' ").c_str());
             }
+
             exit(0); 
-        }   
-    } else {
-        if (state.start_jsdevice == state.hotkey_jsdevice) {
-            system((" kill -9 $(pidof '" + std::string(AppToKill) + "') ").c_str());
+        } else {
+            // printf("Killing: %s\n", AppToKill);
+            system((" sudo killall  '" + std::string(AppToKill) + "' ").c_str());
+
             sleep(3);
-            exit(0);
+            if (system((" pgrep '" + std::string(AppToKill) + "' ").c_str()) == 0) {
+                printf("Forcefully Killing: %s\n", AppToKill);
+                system((" sudo killall  -9 '" + std::string(AppToKill) + "' ").c_str());
+            }
+
+            exit(0); 
         }
     } // sudo kill
 }
